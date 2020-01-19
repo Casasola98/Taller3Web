@@ -1,139 +1,82 @@
 
 import React from 'react';
-import logoEF from './images/logo.png';
+import { Map, TileLayer, Marker, Popup } from './react-leaflet/src'
 import './App.css';
 import Principal from './principal.js';
 import ReactDOM from 'react-dom';
 import Cookies from 'universal-cookie';
 class App extends React.Component {
   constructor() {
-    super();
-    const cookie = new Cookies();
-    if(cookie.get('USER')){
-      ReactDOM.render(<Principal />, document.getElementById('root'));
-    }
-      this.iniciarSesion = this.iniciarSesion.bind(this);
-      this.registrarUsuario = this.registrarUsuario.bind(this);
-      this.state = { displayErrors:false, displayErrorsR:false,errorMessage:"",errorMessageR:""};
+    super()
+    this.state = {
+      rutas: [],
+      puntos: []
+    };
+    this.drawRuta = this.drawRuta.bind(this);
   }
 
-  async iniciarSesion(event) {
-    event.preventDefault();
-    if (!event.target.checkValidity()) {
-      // form is invalid! so we do nothing
-      this.setState({ displayErrors: true, displayErrorsR: false,errorMessage:"Por favor revisar los valores insertados",errorMessageR:""});
-      return;
-    }
-    this.state = { displayErrors:false, displayErrorsR:false,errorMessage:"",errorMessageR:""};
+  async componentDidMount() {
+    let resp = await fetch('/rutas');
+    let rutas = await resp.json();
+    this.setState({
+      rutas: rutas.rutas
+    });
+  }
+  renderRuta = ({ nombre }) => <option value={nombre}>{nombre}</option>
+  renderPuntos = ({ nombre, descripcion, latitud, longitud }) => <Marker position={[latitud, longitud]}><Popup>{nombre}<br />{descripcion}</Popup></Marker>
 
-    // form is valid! We can parse and submit data
+  async addRuta(event) {
+    ReactDOM.render(<Principal />, document.getElementById('root'));
+  }
+
+  async drawRuta(event) {
+    event.preventDefault();
     const formData = new FormData(event.target);
-    const data = new URLSearchParams(formData);
-    await fetch('/login', {
+    const data = { rutaS: this.refs.rutaS.value };
+    console.log(data.rutaS);
+    await fetch('/puntos', {
       method: 'POST',
       body: data
     }).then(res => {
       console.log(res);
       return res.json()
-    })
-      .then(resp => {
-        console.log(resp);
-        if (resp.result) {
-          const cookie = new Cookies();
-          cookie.set('USER', { logged: true, id: resp.id }, { path: '/' });
-          console.log(cookie.get('USER'));
-          ReactDOM.render(<Principal />, document.getElementById('root'));
-        }
-        else{
-          this.setState({ displayErrors: false, displayErrorsR: false,errorMessage:"Usuario o contraseña invalidos",errorMessageR:""});
-        }
+    }).then(resp => {
+      this.setState({
+        puntos: resp.allPuntos
       });
+    });
 
-  }
+    const { puntos } = this.state;
+    const position = [9.9098391, -84.0004016];
+    ReactDOM.render(
+      <Map className="Mapa1" center={position} zoom={13}>
+        <TileLayer
+          attribution='Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"></TileLayer>
 
+        {puntos.map(this.renderPuntos)}
 
-  async registrarUsuario(event) {
-    event.preventDefault();
-    if (!event.target.checkValidity()) {
-      // form is invalid! so we do nothing
-      this.setState({ displayErrors: false, displayErrorsR: true});
-      this.setState({ displayErrors: false, displayErrorsR: true,errorMessage:"",errorMessageR:"Por favor revisar los valores insertados"});
-
-      return;
-    }
-    this.setState({ displayErrors: false, displayErrorsR: false});
-    // form is valid! We can parse and submit data
-    const formData = new FormData(event.target);
-    const data = new URLSearchParams(formData);
-
-    await fetch('/user/register', {
-      method: 'POST',
-      body: data,
-    }).then(res => {
-      console.log(res);
-      return res.json()
-    })
-      .then(resp => {
-        if (resp.result) {
-          const cookie = new Cookies();
-          cookie.set('USER', { logged: true, id: resp.id }, { path: '/' });
-          console.log(cookie.get('USER'));
-          ReactDOM.render(<Principal />, document.getElementById('root'));
-        }
-        else{
-          this.setState({ displayErrors: false, displayErrorsR: false,errorMessage:"",errorMessageR:"Usuario existente, seleccione un nuevo usuario"});
-        }
-      });
-
-
+      </Map>,
+      document.getElementById("ContMapa"));
   }
 
   render() {
-    const { displayErrors,displayErrorsR,errorMessage,errorMessageR } = this.state;
-
+    const position = [9.9098391, -84.0004016];
+    const { rutas, puntos } = this.state;
     return (
       <div id="App" className="App">
-        <div className="Barra">
-          <img src={logoEF} className="ElForaneo" alt="El Foráneo" />
-          <h1>El Foráneo</h1>
-        </div>
         <div className="App-header">
-          <div className="CuadroUsu">
-            <div className="Superior">
-              <label className="Subtitulo">Inicio de Sesión</label>
-            </div>
-            <div className="InteriorCuadro">
-              <form noValidate onSubmit={this.iniciarSesion} className={displayErrors ? 'displayErrors' : ''}>
-                <input className="Campo" type="text" name="usuario" id="inputUserR" placeholder="Username" pattern="^[a-zA-Z0-9_]{1,}$" required></input>
-                <br />
-                <input className="Campo" type="password" name="password" id="inputPassR" placeholder="Password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$" required></input>
-                <br />
-                <button className="Boton">Iniciar Sesión</button>
-              </form>
-            </div>
-            <h3 className="ErrorMessage">{errorMessage}</h3>
+          <form noValidate onSubmit={this.drawRuta}>
+            <select ref="rutaS" className="SelectRuta">
+              {rutas.map(this.renderRuta)}
+            </select>
+            <button className="BotonRuta" id="boton">Pintar</button>
+          </form>
+          <div id="ContMapa" className="ContMapa">
+
+
           </div>
-          <div className="CuadroReg">
-            <div className="Superior">
-              <label className="Subtitulo Subletra">Crea una cuenta</label>
-            </div>
-            <div className="InteriorCuadro2">
-              <form noValidate onSubmit={this.registrarUsuario} className={displayErrorsR ? 'displayErrors' : ''}>
-                <input className="Campo" type="text" name="nombre" id="inputNombre" placeholder="Nombre" pattern="^[A-Za-zÀ-ÖØ-öø-ÿ]{1,}$" required></input>
-                <br />
-                <input className="Campo" type="text" name="apellidos" id="inputApellido" placeholder="Apellidos" pattern="^[A-Za-zÀ-ÖØ-öø-ÿ ]{1,}$" required></input>
-                <br />
-                <input className="Campo" type="email" name="correo" id="inputEmail" placeholder="Correo" required></input>
-                <br />
-                <input className="Campo" type="text" name="usuarioR" id="inputUser" placeholder="Username" pattern="^[a-zA-Z0-9_]{1,}$" required></input>
-                <br />
-                <input className="Campo" type="password" name="passwordR" id="inputPass" placeholder="Password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$" required></input>
-                <br />
-                <button className="Boton">Regístrate</button>
-              </form>
-            </div>
-            <h3 className="ErrorMessage">{errorMessageR}</h3>
-          </div>
+          <button className="BotonRuta" onClick={this.addRuta}>Crear ruta</button>
         </div>
       </div>
     );

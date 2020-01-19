@@ -12,110 +12,37 @@
   background: #faeeae;
   height: 85vh;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
 }
 
-.Barra {
+.ContMapa {
   background: #9B0000;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  color: white;
-  padding-left: 100px;
-  height: 15vh;
+  width: 80%;
+  height: 500px;
 }
 
-.ElForaneo {
-  height: 74px;
-  margin: 0px 20px;
+.Mapa1 {
+  width: 100%;
+  height: 100%;
 }
 
-.CuadroUsu {
-  display: flex;
-  flex-direction: column;
+.SelectRuta {
+  border-radius: 30px;
+  padding: 5px;
+  margin: 10px;
+}
+
+.BotonRuta {
+  border-radius: 30px;
+  padding: 5px 20px;
+  margin: 10px;
+}
+
+.Encabezado {
+  background: tomato;
   height: 300px;
-  width: 35vw;
-  border-radius: 30px;
-  background: #1E332B;
-  margin: 0px 5vw;
-}
-
-.ErrorMessage { 
-  position: absolute; 
-  width: 35vw;
-  margin-top: 80px;
-  text-align: center;
-  font-size: 12px;
-}
-
-.CuadroReg {
-  display: flex;
-  flex-direction: column;
-  height: 450px;
-  width: 35vw;
-  border-radius: 30px;
-  background: #1E332B;
-  margin: 0px 5vw;
-}
-
-.Superior {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  height: 70px;
-  border-radius: 30px 30px 0px 0px;
-  background: #E18737;
-}
-
-.InteriorCuadro {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 270px;
-}
-
-.InteriorCuadro2 {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 380px;
-}
-
-.Campo {
-  font-style: italic;
-  font-weight: normal;
-  font-size: 14px;
-  border-radius: 30px;
-  padding: 4px;
-  margin: 15px 0px;
-  width: 15vw;
-}
-
-.Boton {
-  font-style: italic;
-  font-weight: normal;
-  font-size: 14px;
-  border-radius: 30px;
-  width: 110px;
-  height: 34px;
-  background: #E18737;
-  color: white;
-  border-style: none;
-}
-
-.Subtitulo {
-  margin-left: 35px;
-  font-style: normal;
-  font-size: 23px;
-  color: white;
-  font-weight: bold;
-  border-radius: 30px;
 }
