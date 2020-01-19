@@ -1,7 +1,3 @@
-.displayErrors input:invalid {
-  border-color: red;
-}
-
 .App {
   text-align: center;
   height: 100%;
@@ -9,8 +5,7 @@
 }
 
 .App-header {
-  background: #faeeae;
-  height: 85vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -20,7 +15,7 @@
 }
 
 .ContMapa {
-  background: #9B0000;
+  background: wheat;
   width: 80%;
   height: 500px;
 }
