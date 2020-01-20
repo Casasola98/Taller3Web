@@ -5,21 +5,10 @@ const router = express.Router();
 
 var urlencodedParser = bodyParser.urlencoded({ extended : false});
 
-// router.get('/usuarios', async (req , res)=> {
-//     try{
-//         let usuarios = await DB.default.usuarios.all();
-//         res.json(usuarios);
-//     }
-//     catch(e){
-//         console.log(e);
-//         res.sendStatus(500);
-//     }
-// });
-
-router.post('/login', urlencodedParser, async (req , res)=> {
+router.post('/getPuntos', urlencodedParser, async (req , res)=> {
     try{
-        console.log(req.body.rutaS);
-        let puntos = await DB.default.puntos.login(req.body.rutaS);
+        console.log(req.body);
+        let puntos = await DB.default.puntos.getPuntos(req.body.rutaS);
         res.send({result:true, puntos:puntos});
     }
     catch(e){
@@ -28,101 +17,36 @@ router.post('/login', urlencodedParser, async (req , res)=> {
     }
 });
 
-// router.post('/user/register', urlencodedParser, async (req , res)=> {
-//     try{
-//         let result = true;
-//         let dbResult = await DB.default.usuarios.register(req.body.nombre, req.body.apellidos, req.body.correo, req.body.usuarioR, req.body.passwordR);
-//         if(dbResult.errno)
-//             result = false;
-//         res.send({result:result});
-//     }
-//     catch(e){
-//         console.log(e);
-//         res.send({result:false, message:"Error al crear usuario, asegurese de que su usuario sea único."});
-//     }
-// });
-// router.get('/recetas', async (req , res)=> {
-//     try{
-//         let recetas = {}
-//         if(typeof req.query.id !== 'undefined' ){
-//             recetas = await DB.default.recetas.find(req.query.id); //Recetas favoritas
-//         }
-//         else if(typeof req.query.search !== 'undefined'){
-//             recetas = await DB.default.recetas.search(req.query.search); //Busqueda de recetas
-//         }
-//         else{
-//             recetas =  await DB.default.recetas.all();
-//         }
-//         res.json(recetas);
-//     }
-//     catch(e){
-//         console.log(e);
-//         res.sendStatus(500);
-//     }
-// });
-
-// router.get('/favoritas/:id_usuario', async (req, res) => {
-//     try{
-//         let recetas = {}
-//         if(req.params.id_usuario){
-//             console.log(req.params.id_usuario);
-//             recetas = await DB.default.recetas.favoritas(req.params.id_usuario); //Recetas favoritas
-//             res.json(recetas);
-//         }
-//         else{
-//             res.sendStatus(500);
-//         }
-//     }
-//     catch(e){
-//         console.log(e);
-//         res.sendStatus(500);
-//     }
-// });
-
-router.get('/categorias', async (req, res) =>{
+router.post('/addRuta', urlencodedParser, async (req , res)=> {
     try{
-        let categorias = await DB.default.rutas.categorias(); //Categorias
-        console.log(categorias);
-        res.json(categorias);
+        
+        var elJSON = JSON.parse(req.body.elJSON);
+        let ruta = await DB.default.rutas.addRuta(req.body.nombre, req.body.descripcion);
+        
+        for (var point in elJSON){
+            console.log(elJSON[point].nombre);
+            let puntos = await DB.default.puntos.addPunto(elJSON[point].nombre, elJSON[point].descripP, elJSON[point].latitud, elJSON[point].longitud, req.body.nombre);
+        }
+        //let ruta = await DB.default.rutas.addRuta(req.body.nombre, req.body.descripcion);
+        //let puntos = await DB.default.puntos.addPunto(req.body.rutaS);
+        res.send({result:true});
+    }
+    catch(e){
+        console.log(e);
+        res.send({result:false,message:"Invalid username or password"})
+    }
+});
+
+router.get('/rutas', async (req, res) =>{
+    try{
+        let rutas = await DB.default.rutas.rutas(); //Categorias
+        console.log(rutas);
+        res.json(rutas);
     }
     catch(e){
         console.log(e);
         res.sendStatus(500);
     }
 });
-
-// router.get('/notificaciones/:id',async (req, res) => {
-//     try{
-//         let dbResult = await DB.default.notificaciones.all(req.params.id);
-//         res.send(dbResult);
-//     }
-//     catch(e){
-//         console.log(e);
-//         res.sendStatus(500);
-//     }
-// });
-
-// router.post('/notificaciones', urlencodedParser, async (req , res)=> {
-//     try{
-//         if(req.body.read){
-//             //Read notifications if body includes it
-//             try{
-//                 let dbResult = await DB.default.notificaciones.all(req.body.id_usuario);
-//                 res.send(dbResult);
-//             }
-//             catch(e){
-//                 console.log(e);
-//                 res.sendStatus(500);
-//             }
-//         }
-//         let dbResult = await DB.default.notificaciones.insert(req.body.id_usuario, req.body.mensaje);
-//         res.send(req.body.usuario);
-//     }
-//     catch(e){
-//         console.log(e);
-//         res.sendStatus(500);
-//     }
-// });
-
 
 module.exports = router;

@@ -1,0 +1,65 @@
+.Contenedor1 {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0px;
+}
+
+.ContDatos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  height: 100%;
+  width: 50%;
+}
+
+.ContMapaP {
+  background: wheat;
+  width: 47%;
+  height: 500px;
+}
+
+.Campo {
+  font-style: italic;
+  font-weight: normal;
+  border-radius: 30px;
+  padding: 4px;
+  margin: 10px 0px;
+}
+
+.PuntosLista {
+  width: 100%;
+  font-style: italic;
+  font-weight: normal;
+  font-size: 14px;
+  text-align: initial;
+  overflow: auto;
+}
+
+.PuntoI {
+  width: 100%;
+  font-style: italic;
+  font-weight: normal;
+  font-size: 14px;
+  text-align: initial;
+  background: rgb(39, 47, 85);
+  color: white;
+  border: none;
+  text-align: center;
+}
+
+.AddRoute {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0px 15px;
+  border: solid;
+  border-width: thick;
+  border-radius: 30px;
+  border-color: white;
+}
